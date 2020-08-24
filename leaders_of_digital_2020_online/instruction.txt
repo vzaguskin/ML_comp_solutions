@@ -1,0 +1,22 @@
+1. Скрипты распаковать в одну папку с каталогами train, test и файлом sample_submission.csv(на этапе обучения можно без лика).
+2. Классификация - запустить "python train_classification.py train". Должно пройти обучение и сгенериться файл submission_classification.csv.
+3. Базовая модель сегментации - запустить "python train_segmentation.py train". Требуется карта с 11 Gb видеопамяти, лучше больше. На 11 Gb на тренировке четвертого фолда может выпасть по недостатку памяти. В этом случае надо запустить "python train_segmentation.py resume". Затем выполнить "python train_segmentation.py" - сгенерится сабмит submission_segmentation.csv
+3. Вспомогательная модель сегментации - запустить "python train_segmentation_4с.py train". Требуется карта с 11 Gb видеопамяти, лучше больше. На 11 Gb на тренировке четвертого фолда может выпасть по недостатку памяти. В этом случае надо запустить "python train_segmentation_4с.py resume"
+
+На этом стадия обучения заканчивается. Начинается стадия использования лика. Соответственно, sample_submission.csv с ликом необходим.
+
+4. Выполняем python decode_submission.py - создается папка с масками предсказания базовой модели.
+5. Выполняем python decode_ss.py - создается папка с частично деаугментированными масками из лика, совмещенными с масками из предсказания базовой модели.
+6. Выполняем python train_segmentation_4c.py - выполняются предсказания вспомогательной модели, с использованием лика, и создается сабмит submission_segmentation_4channel.csv.
+7. Выполняем python decode_submission_4c.py - сохраняем маски из предыдущего шага в файлы.
+8. Выполняем python align_masks.py - выравниваем маски из лика по лучшему из предыдущих предиктов.
+9. Выполняем python make_leak_sub.py - получаем сабмит submission_seg_leaky.csv. В принципе, для подтверждения 6-го места тут можно было бы остановится. В Наилучшем сабмите делалась еще одна итерация:
+10. Выполняем python decode_submission_aligned.py
+11. Выполняем python train_segmentation_4c.py second
+12. python decode_submission_4c.py
+13. python align_masks.py
+14. python make_leak_sub.py
+
+Получившийся файл submission_seg_leaky.csv является итоговым сабмитом.
+
+
